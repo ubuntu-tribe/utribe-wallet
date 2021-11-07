@@ -8,30 +8,107 @@
         <div class="p-grid">
 
              <div class="p-col-12 p-md-6 p-xl-6">
+
                 <div class="card no-gutter widget-overview-box widget-overview-box-1">
                     <span class="overview-icon">
                         <i class="pi pi-wallet"></i>
                     </span>
-                    <span class="overview-title">Hello {{myname}}</span>
+                    <span class="overview-title">My Account</span>
                      
-                    <div class="p-grid overview-detail text-left">
+                    <div class="p-grid overview-detail">
                         <div class="p-col-12">
-                            <div class="overview-number">{{balance}}</div>
-                            <Chip icon="pi pi-check" > {{address}}</Chip>
-                            <InputText type="text" id="myaddress" class="p-inputtext-sm" placeholder="Your Address"  />
-                            
+                            <div class="overview-number">{{balance}} GIFT</div>
+                        </div>
+                    </div>
+                    <div class="p-col-12 p-md-12">
+                        <div class="p-inputgroup">
+                                <span class="p-inputgroup-addon">
+                                        <i class="pi pi-credit-card"></i>
+                                </span>
+                                <InputText id="myaddress" placeholder="Your Address" />
                         </div>
                     </div>
                 </div>
+
+                <div class="card no-gutter widget-overview-box widget-overview-box-2">
+                    <span class="overview-icon">
+                        <i class="pi pi-wallet"></i>
+                    </span>
+                    <span class="overview-title">Send</span>
+                     
+                    
+                     <div class="p-col-12 p-md-12">
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon">
+                                    <i class="pi pi-user"></i>
+                            </span>
+                            <InputText placeholder="utribe13v8gktej55gxdknzff3359rhvpzwt75jqawh8f" value="utribe13v8gktej55gxdknzff3359rhvpzwt75jqawh8f" id="toadr" name="toadr" />
+                        </div>
+                    </div>
+
+                    <div class="p-col-12 p-md-12">
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon">$</span>
+                            <InputText placeholder="amount" id="amount" name="amount" />
+                            <span class="p-inputgroup-addon">.00</span>
+                        </div>
+                    </div>
+                     <div class="p-col-12 p-md-12">
+                    <Button @click="sendCoins" label="send" icon="pi pi-check" :loading="loading[0]" />
+                    </div>
+                </div>
+
+
             </div>
            
+            <div class="p-col-12 p-md-6 p-xl-6">
+                
+                 <div class="card">
+                    <h4>Recent Transactions</h4>
+                    <p>summary of transaction</p>
+                    <ul class="widget-person-list">
+                        <li>
+                            <div class="person-item">
+                                <img src="assets/demo/images/avatar/amyelsner.png" alt="diamond-layout" />
+                                <div class="person-info">
+                                    <div class="person-name">Amy Elsner</div>
+                                    <div class="person-subtext">Accounting</div>
+                                </div>
+                            </div>
+                            <div class="person-actions">
+                                <Button class="p-button-rounded p-button-success" icon="pi pi-envelope"></Button>
+                                <Button class="p-button-rounded p-button-warning" icon="pi pi-cog"></Button>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="person-item">
+                                <img src="assets/demo/images/avatar/annafali.png" alt="diamond-layout" />
+                                <div class="person-info">
+                                    <div class="person-name">Anna Fali</div>
+                                    <div class="person-subtext">Procurement</div>
+                                </div>
+                            </div>
+                            <div class="person-actions">
+                                <Button class="p-button-rounded p-button-success" icon="pi pi-envelope"></Button>
+                                <Button class="p-button-rounded p-button-warning" icon="pi pi-cog"></Button>
+                            </div>
+                        </li>
+                        
+                    </ul>
+                </div>
+
+            </div>
+
             
             
-            
+                
+           
+
+       
            
 
 
-           
+            
         </div>
     </div>
 </template>
@@ -50,8 +127,15 @@ export default {
         return {
             messages: [],
             count: 0,
-            myname: null,
-            
+            selectedOrderWeek: null,
+            products: null,
+            address: null,
+            addressreceiver: null,
+            balance: null,
+            balancereceiver: null,
+            newbalance: null,
+            mnemonic: null,
+            wallet: null,
             //Buttons
             loading: [false],
            

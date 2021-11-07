@@ -28,37 +28,11 @@
         <div class="topbar-right">
             <ul class="topbar-menu">
                 <li class="search-item">
-                    <a tabindex="0" @click="onSearchClick">
-                        <i class="pi pi-search"></i>
+                    <a href="#/wallet">
+                        <i class="pi pi-wallet"></i>
                     </a>
                 </li>
-                <li class="notifications-item" :class="{ 'active-menuitem ': topbarNotificationMenuActive }">
-                    <a href="#" tabindex="0" @click="onTopbarNotificationMenuButtonClick">
-                        <i class="pi pi-bell"></i>
-                        <span class="topbar-badge">5</span>
-                    </a>
-                    <ul class="notifications-menu fade-in-up">
-                        
-                        <li role="menuitem">
-                            <a href="#" tabindex="0">
-                                <i class="pi pi-check-square"></i>
-                                <div class="notification-item">
-                                    <div class="notification-summary">Withdrawn Completed</div>
-                                    <div class="notification-detail">Funds are on their way.</div>
-                                </div>
-                            </a>
-                        </li>
-                        <li role="menuitem">
-                            <a href="#" tabindex="0">
-                                <i class="pi pi-chart-line"></i>
-                                <div class="notification-item">
-                                    <div class="notification-summary">Monthly Reports</div>
-                                    <div class="notification-detail">New reports are ready.</div>
-                                </div>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
+
 
                 <li class="profile-item" :class="{ 'active-menuitem fadeInDown': topbarUserMenuActive }">
                     <a href="#" @click="onTopbarUserMenuButtonClick">
@@ -67,13 +41,13 @@
                     </a>
                     <ul class="profile-menu fade-in-up">
                         <li>
-                            <a href="#">
+                            <a href="#/profile">
                                 <i class="pi pi-user"></i>
                                 <span>Profile</span>
                             </a>
                         </li>
                         <li>
-                            <a href="#">
+                            <a href="#/settings">
                                 <i class="pi pi-cog"></i>
                                 <span>Settings</span>
                             </a>

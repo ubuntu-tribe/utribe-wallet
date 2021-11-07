@@ -35,6 +35,7 @@ import AppFooter from "./AppFooter";
 import AppConfig from "./AppConfig";
 import AppSearch from "./AppSearch";
 import AppRightMenu from "./AppRightMenu";
+
 export default {
     data() {
         return {
@@ -58,19 +59,20 @@ export default {
             configClick: false,
             menu: [
                 {
-                    label: "Wallet", icon: "pi pi-wallet pi-home", to: "/"
+                    label: "Home", icon: "pi pi-home",
+                     items: [
+                        {label: "Dashboard", icon: "pi pi-fw pi-home", to: "/"},
+                        {label: "Wallet", icon: "pi pi-fw pi-wallet", to: "/wallet"},
+                        
+                    ],
                    
                 },
                 { separator: true },
                 {
                     label: "Profile", icon: "pi pi-user pi-id-card",
                     items: [
-                        {label: "Form Layout", icon: "pi pi-fw pi-id-card", to: "/formlayout"},
-                        
-                        {label: "Panel", icon: "pi pi-fw pi-tablet", to: "/panel"},
-                        {label: "Overlay", icon: "pi pi-fw pi-clone", to: "/overlay"},
-                        
-                        {label: "Message", icon: "pi pi-fw pi-comment", to: "/messages"},
+                        {label: "My Profile", icon: "pi pi-fw pi-id-card", to: "/profile"},
+                        {label: "Settings", icon: "pi pi-fw pi-comment", to: "/settings"},
                         
                     ],
                 },
