@@ -15,7 +15,7 @@ const routes = [
         name: 'wallet',
         component: () => import('./components/wallet.vue'),
         meta: {
-            breadcrumb: [{ parent: 'Utribe Wallet', label: 'Profile' }],
+            breadcrumb: [{ parent: 'Utribe Wallet', label: 'Wallet' }],
         },
     },
     {
@@ -33,7 +33,24 @@ const routes = [
         meta: {
             breadcrumb: [{ parent: 'Utribe Wallet', label: 'Settings' }],
         },
-    }
+    },
+    //Torus redirect
+    {
+        path: '/torus/:login',
+        name: 'torus',
+        component: () => import('./components/torus.vue'),
+        meta: {
+            breadcrumb: [{ parent: 'Login', label: 'Login successfull' }],
+        },
+    },
+    {
+        path: '/result:id',
+        name: 'result',
+        component: () => import('./components/torus.vue'),
+        meta: {
+            breadcrumb: [{ parent: 'Login', label: 'Login' }],
+        },
+    },
    
 ];
 

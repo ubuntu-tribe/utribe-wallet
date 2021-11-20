@@ -59,13 +59,10 @@ export default {
             configClick: false,
             menu: [
                 {
-                    label: "Home", icon: "pi pi-home",
-                     items: [
-                        {label: "Dashboard", icon: "pi pi-fw pi-home", to: "/"},
-                        {label: "Wallet", icon: "pi pi-fw pi-wallet", to: "/wallet"},
-                        
-                    ],
-                   
+                    label: "Home", icon: "pi pi-home",  to: "/",
+                },
+                {
+                    label: "Wallet", icon: "pi pi-wallet", to: "/wallet",
                 },
                 { separator: true },
                 {

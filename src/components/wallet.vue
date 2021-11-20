@@ -9,54 +9,93 @@
 
              <div class="p-col-12 p-md-6 p-xl-6">
 
-                <div class="card no-gutter widget-overview-box widget-overview-box-1">
-                    <span class="overview-icon">
-                        <i class="pi pi-wallet"></i>
-                    </span>
-                    <span class="overview-title">My Account</span>
-                     
-                    <div class="p-grid overview-detail">
-                        <div class="p-col-12">
-                            <div class="overview-number">{{balance}} GIFT</div>
+                <div v-if="mnemonic">
+             
+                    <div class="card no-gutter widget-overview-box widget-overview-box-1" id="divbalance">
+                         <span class="overview-icon">
+                            <i class="pi pi-wallet"></i>
+                        </span>
+                        <span class="overview-title">My Account</span>
+                        <div class="p-grid overview-detail">
+                            <div class="p-col-12">
+                                <div class="overview-number">{{balance}} GIFT</div>
+                            </div>
+                        </div>
+                        <div class="p-col-12 p-md-12">
+                            <div class="p-inputgroup">
+                                    <span class="p-inputgroup-addon">
+                                            <i class="pi pi-credit-card"></i>
+                                    </span>
+                                    <InputText id="myaddress" placeholder="Your Address" />
+                                   
+                            </div>
                         </div>
                     </div>
-                    <div class="p-col-12 p-md-12">
-                        <div class="p-inputgroup">
+
+                    <div class="card no-gutter widget-overview-box widget-overview-box-2" id="divsend">
+                        <span class="overview-icon">
+                            <i class="pi pi-wallet"></i>
+                        </span>
+                        <span class="overview-title">Send</span>
+                        
+                        
+                        <div class="p-col-12 p-md-12">
+                            <div class="p-inputgroup">
                                 <span class="p-inputgroup-addon">
-                                        <i class="pi pi-credit-card"></i>
+                                        <i class="pi pi-user"></i>
                                 </span>
-                                <InputText id="myaddress" placeholder="Your Address" />
+                                <InputText placeholder="utribe13v8gktej55gxdknzff3359rhvpzwt75jqawh8f" value="utribe13v8gktej55gxdknzff3359rhvpzwt75jqawh8f" id="toadr" name="toadr" />
+                            </div>
+                        </div>
+
+                        <div class="p-col-12 p-md-12">
+                            <div class="p-inputgroup">
+                                <span class="p-inputgroup-addon">$</span>
+                                <InputText placeholder="amount" id="amount" name="amount" />
+                                <span class="p-inputgroup-addon">.00</span>
+                            </div>
+                        </div>
+                        <div class="p-col-12 p-md-12">
+                        <Button @click="sendCoins" label="send" icon="pi pi-check" :loading="loading[0]" />
                         </div>
                     </div>
-                </div>
+    
+                </div> <!-- end if -->
 
-                <div class="card no-gutter widget-overview-box widget-overview-box-2">
-                    <span class="overview-icon">
-                        <i class="pi pi-wallet"></i>
-                    </span>
-                    <span class="overview-title">Send</span>
-                     
-                    
-                     <div class="p-col-12 p-md-12">
-                        <div class="p-inputgroup">
-                            <span class="p-inputgroup-addon">
+                <!-- ELSE statemant -->
+                <div v-else>
+                    <div class="card no-gutter widget-overview-box widget-overview-box-1">
+                        <span class="overview-icon">
+                            <i class="pi pi-wallet"></i>
+                        </span>
+                        <span class="overview-title">Unlock your Wallet</span>
+                        <br><br>
+                        {{pk}}  <br>
+                        {{pubk}} 
+                        klick into the wallet name field and select your wallet (autofill from Browsers Keystore)
+                        <div class="p-col-12 p-md-4">
+                            <div class="p-inputgroup">
+                                <span class="p-inputgroup-addon">
                                     <i class="pi pi-user"></i>
-                            </span>
-                            <InputText placeholder="utribe13v8gktej55gxdknzff3359rhvpzwt75jqawh8f" value="utribe13v8gktej55gxdknzff3359rhvpzwt75jqawh8f" id="toadr" name="toadr" />
+                                </span>
+                                <InputText placeholder="eKlick here to load your Wallet"  autocomplete="username" id="username" /><Password v-model="value" name="mnemonics" id="password" placeholder="" autocomplete="password" style="display:none" />
+                            </div>
                         </div>
+                        <Button @click="openWallet" label="unlock wallet" icon="pi pi-check" :loading="loading[0]" />
                     </div>
 
-                    <div class="p-col-12 p-md-12">
-                        <div class="p-inputgroup">
-                            <span class="p-inputgroup-addon">$</span>
-                            <InputText placeholder="amount" id="amount" name="amount" />
-                            <span class="p-inputgroup-addon">.00</span>
-                        </div>
+                     <div class="card no-gutter widget-overview-box widget-overview-box-1">
+                        <span class="overview-icon">
+                            <i class="pi pi-wallet"></i>
+                        </span>
+                        <span class="overview-title">Import Wallet from Mnemonic Key</span>
+                        <br><br>
+                        import a wallet from a Mnemonic Key, or encrypted Key
+                        
+                        <Button @click="$router.push('torus')" label="import wallet" icon="pi pi-check" :loading="loading[0]" />
                     </div>
-                     <div class="p-col-12 p-md-12">
-                    <Button @click="sendCoins" label="send" icon="pi pi-check" :loading="loading[0]" />
-                    </div>
-                </div>
+                </div> <!-- end else -->
+
 
 
             </div>
@@ -114,13 +153,19 @@
 </template>
 
 <script>
-import ProductService from '../service/ProductService';
-//Cosmos
-import { coin, coins, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
-import { assertIsBroadcastTxSuccess, SigningStargateClient, StargateClient } from "@cosmjs/stargate";
-import { stringToPath } from "@cosmjs/crypto"; //custom adress prefix
 
-const rpcEndpoint = "http://195.48.9.150:26657";
+//Cosmos
+import { coins, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
+import { assertIsBroadcastTxSuccess, SigningStargateClient, StargateClient } from "@cosmjs/stargate";
+//import { stringToPath } from "@cosmjs/crypto"; //custom adress prefix
+
+import eccrypto from "@toruslabs/eccrypto";
+
+const rpcEndpoint = "http://195.48.9.153:26657";
+
+
+
+
 
 export default {
     data() {
@@ -138,27 +183,44 @@ export default {
             wallet: null,
             //Buttons
             loading: [false],
-           
+           pk: null,
+           pubk: null,
         };
     },
      async mounted () {
-     
-      //Wallet
-      this.mnemonic = "fly junk spawn frog ski pyramid zero buddy asthma normal birth pride riot verify ketchup car thank regular stick piece miss modify flee aim";
-      const wallet = await DirectSecp256k1HdWallet.fromMnemonic( this.mnemonic, { prefix: "utribe" } );
-      const [firstAccount] = await wallet.getAccounts();
-      this.address = firstAccount.address
-      document.getElementById('myaddress').value=this.address;
-      //client
-      const client = await SigningStargateClient.connectWithSigner(rpcEndpoint, wallet)
-     
-      // get balance sender
-      const before = await client.getBalance(firstAccount.address, "token")
-      this.balance = before.amount
-    
+        // const walletname = localStorage.getItem('walletname')
+         //document.getElementById('username').value = localStorage.getItem('walletname')
+
+        // A new random 32-byte private key.
+        var privateKey = eccrypto.generatePrivate();
+        // Corresponding uncompressed (65-byte) public key.
+        var publicKey = eccrypto.getPublic(privateKey);
+
+        this.pk = Buffer.from(privateKey).toString('base64')
+        this.pubk =Buffer.from(publicKey).toString('base64')
+
+        console.log("priv: "+privateKey);
+        console.log(publicKey);
 
     },
     methods: {
+        async openWallet () {
+            const mnemonicget = document.getElementById('password').value
+            this.mnemonic = mnemonicget
+            console.log("Mnemonic: "+mnemonicget)
+
+            //Wallet
+            //this.mnemonic = "fly junk spawn frog ski pyramid zero buddy asthma normal birth pride riot verify ketchup car thank regular stick piece miss modify flee aim";
+            const wallet = await DirectSecp256k1HdWallet.fromMnemonic( this.mnemonic, { prefix: "utribe" } );
+            const [firstAccount] = await wallet.getAccounts();
+            this.address = firstAccount.address
+            document.getElementById('myaddress').value=this.address;
+            //client
+            const client = await SigningStargateClient.connectWithSigner(rpcEndpoint, wallet)
+            // get balance sender
+            const before = await client.getBalance(firstAccount.address, "GIFT")
+            this.balance = before.amount
+        },
         async sendCoins () {
             //handle Button state
             this.loading[0] = true;
@@ -174,10 +236,12 @@ export default {
             
             if(isNaN(amount)){
                 console.log("nan");
-                this.messages = [ {severity: 'warn', content: 'Value not valid must be a number', id: this.count++} ]
+                //this.messages = [ {severity: 'warn', content: 'Value not valid must be a number', id: this.count++} ]
+                this.$toast.add({severity:'warn', summary: 'Error', detail:'Value not valid must be a number', life: 5000});
             } else if(amount > this.balance) {
                 console.log("to mutch");
-                this.messages = [ {severity: 'warn', content: 'Your balance is not sufficient', id: this.count++} ]
+                this.$toast.add({severity:'warn', summary: 'Error', detail:'Your balance is not sufficient', life: 5000})
+                //this.messages = [ {severity: 'warn', content: 'Your balance is not sufficient', id: this.count++} ]
             } else {
                 
                 this.wallet = await DirectSecp256k1HdWallet.fromMnemonic( this.mnemonic, { prefix: "utribe" } );
@@ -185,12 +249,12 @@ export default {
                 //client
                 const client = await SigningStargateClient.connectWithSigner(rpcEndpoint, this.wallet);
                 //TX
-                const sendamount = coins(amount, "token");
+                const sendamount = coins(amount, "GIFT");
                 const memo = "test transaction"
                 const fee = {
                     amount: [
                     {
-                        denom: "token",
+                        denom: "GIFT",
                         amount: "2",
                     },
                     ],
@@ -201,10 +265,12 @@ export default {
                 //const broadcastresult = ;
                 console.log(result);
                 // get balance sender
-                const before = await client.getBalance(this.address, "token");  
+                const before = await client.getBalance(this.address, "GIFT");  
                 this.balance = before.amount
 
-                this.messages = [ {severity: 'success', content: 'Transaction successfully', id: this.count++} ]
+                //this.messages = [ {severity: 'success', content: 'Transaction successfully', id: this.count++} ]
+               
+                this.$toast.add({severity:'success', summary: 'Transaction', detail:'successfull', life: 3000});
                 this.loading[0] = false;
             }
             
@@ -212,6 +278,10 @@ export default {
       
         },
 
+        setup() {
+            const toast = useToast();
+            
+        },
         menuToggle($event) {
             this.$refs.menu.toggle($event);
         },
@@ -227,6 +297,7 @@ export default {
             });
         },
     },
+
 };
 </script>
 

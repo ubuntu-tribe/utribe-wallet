@@ -6,142 +6,138 @@
     <div class="layout-dashboard">
        
         <div class="p-grid">
-
-             <div class="p-col-12 p-md-6 p-xl-6">
+            <div class="p-col-12 p-md-6 p-xl-6">
                 <div class="card no-gutter widget-overview-box widget-overview-box-1">
-                    <span class="overview-icon">
-                        <i class="pi pi-wallet"></i>
-                    </span>
-                    <span class="overview-title">Hello {{myname}}</span>
-                     
-                    <div class="p-grid overview-detail text-left">
-                        <div class="p-col-12">
-                            <div class="overview-number">{{balance}}</div>
-                            <Chip icon="pi pi-check" > {{address}}</Chip>
-                            <InputText type="text" id="myaddress" class="p-inputtext-sm" placeholder="Your Address"  />
-                            
+                    <div v-if="counttest > 10">
+
+               
+                        <span class="overview-icon">
+                                <i class="pi pi-wallet"></i>
+                        </span>
+                        <span class="overview-title">Welcome to Utribe Wallet </span>
+                        <br> 
+                        <p>please Login</p>
+                        <div>
+                            <Button @click="triggerLogin" label="Login / create Account" icon="pi pi-key" :loading="loading[2]" />  
+                            <br />
                         </div>
-                    </div>
+                        <div id="console">
+                            <p></p>
+                        </div>
+
+                    </div><!-- end if -->
+
+                    <!-- ELSE -->
+                    <div v-else>
+                        <span class="overview-icon">
+                            <i class="pi pi-wallet"></i>
+                        </span>
+                        <span class="overview-title">Hello {{myname}}</span>
+                        
+                        <div class="p-grid overview-detail text-left">
+                            <div class="p-col-12">
+                                <div class="overview-number">{{feedback}}</div>
+                                
+                                <Button @click="addMnemonic" label="open wallet" icon="pi pi-check" :loading="loading[1]" />
+                            </div>
+                        </div>
+
+                    </div><!-- end else -->
+
                 </div>
             </div>
-           
-            
-            
-            
-           
-
-
-           
         </div>
+           
+                    
+     
     </div>
 </template>
 
 <script>
-import ProductService from '../service/ProductService';
-//Cosmos
-import { coin, coins, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
-import { assertIsBroadcastTxSuccess, SigningStargateClient, StargateClient } from "@cosmjs/stargate";
-import { stringToPath } from "@cosmjs/crypto"; //custom adress prefix
+//Torus
+import OpenLogin from "@toruslabs/openlogin";
 
-const rpcEndpoint = "http://195.48.9.150:26657";
 
 export default {
     data() {
         return {
             messages: [],
             count: 0,
+            counttest: 11,
             myname: null,
-            
+            feedback: null,
+            mnemonicbox: null,
+            walletobject: null,
             //Buttons
-            loading: [false],
-           
+            loading: [false,false,false],
+            //Tor.us
+            //privKey: "",
+            consoleOutput: "",
+            isMocked: true,
+            loginHint: "",
+            selectedVerifier: "google",
+            verifier: {
+                loginProvider: "google", // "facebook", "apple", "twitter", "reddit", etc. See full list of supported logins: https://docs.tor.us/direct-auth/verifiers
+                clientId: "BFTS7IfH33HVEXISSMVlqC2Y1Pvf-6OEdr9wQKbkmgnhD9wxoCOk443gxK6hmvObxKwQNacY-Di5SNMF8S40uzo",
+            }
         };
     },
-     async mounted () {
-     
-      //Wallet
-      this.mnemonic = "fly junk spawn frog ski pyramid zero buddy asthma normal birth pride riot verify ketchup car thank regular stick piece miss modify flee aim";
-      const wallet = await DirectSecp256k1HdWallet.fromMnemonic( this.mnemonic, { prefix: "utribe" } );
-      const [firstAccount] = await wallet.getAccounts();
-      this.address = firstAccount.address
-      document.getElementById('myaddress').value=this.address;
-      //client
-      const client = await SigningStargateClient.connectWithSigner(rpcEndpoint, wallet)
-     
-      // get balance sender
-      const before = await client.getBalance(firstAccount.address, "token")
-      this.balance = before.amount
-    
+    async mounted () {
+       
+        //Tor.us
+        if(this.sdk) return;
+        this.sdk = new OpenLogin({
+        clientId: this.verifier.clientId,
+        network: "testnet" // valid values (testnet or mainnet)
+        });
 
+        await this.sdk.init();
+        if (this.sdk.privKey) {
+        console.log("Private key: ", this.sdk.privKey);
+        }
+
+        
+        await this.init();
+    
     },
     methods: {
-        async sendCoins () {
-            //handle Button state
-            this.loading[0] = true;
-
-             // set receiver
-            //const recipient = "utribe13v8gktej55gxdknzff3359rhvpzwt75jqawh8f" ; //bob
-            const recipient = document.getElementById('toadr').value
-            this.addressreceiver = recipient;
-
-            //amount
-            const amount = Number(document.getElementById('amount').value)
-            console.log(amount+" - "+this.balance)
-            
-            if(isNaN(amount)){
-                console.log("nan");
-                this.messages = [ {severity: 'warn', content: 'Value not valid must be a number', id: this.count++} ]
-            } else if(amount > this.balance) {
-                console.log("to mutch");
-                this.messages = [ {severity: 'warn', content: 'Your balance is not sufficient', id: this.count++} ]
-            } else {
-                
-                this.wallet = await DirectSecp256k1HdWallet.fromMnemonic( this.mnemonic, { prefix: "utribe" } );
-                
-                //client
-                const client = await SigningStargateClient.connectWithSigner(rpcEndpoint, this.wallet);
-                //TX
-                const sendamount = coins(amount, "token");
-                const memo = "test transaction"
-                const fee = {
-                    amount: [
-                    {
-                        denom: "token",
-                        amount: "2",
-                    },
-                    ],
-                    gas: "180000", // 180k
-                };
-                //Send TX
-                const result = await client.sendTokens( this.address, recipient, sendamount, fee, memo);
-                //const broadcastresult = ;
-                console.log(result);
-                // get balance sender
-                const before = await client.getBalance(this.address, "token");  
-                this.balance = before.amount
-
-                this.messages = [ {severity: 'success', content: 'Transaction successfully', id: this.count++} ]
-                this.loading[0] = false;
-            }
-            
-
-      
-        },
-
+        
+       
         menuToggle($event) {
             this.$refs.menu.toggle($event);
         },
-
-        refreshDataset($event) {
-            this.$refs.chart.reinit($event);
+        //Tor.us
+        async init() {
+            if(this.sdk) return
+            this.sdk = new OpenLogin({ clientId: this.verifiers.google.clientId, iframeUrl: "http://beta.openlogin.com" });
+            window.openlogin = this.sdk;
+            await this.sdk.init();
+            if (this.sdk.privKey) {
+                console.log("private key: ", this.sdk.privKey);
+                this.console(this.sdk.privKey)
+            }
         },
-
-        formatCurrency(value) {
-            return value.toLocaleString('en-US', {
-                style: 'currency',
-                currency: 'USD',
+        async triggerLogin() {
+            await this.sdk.login({
+                loginProvider: "google",
+                redirectUrl: "http://195.48.9.162:8080/#/torus/id:"
             });
+            console.log("private key: ", this.sdk.privKey);
         },
+        async triggerFastLogin() {
+            await this.sdk.fastLogin( { redirectUrl: "http://195.48.9.162:8080/#/torus/id:"} ) 
+        },
+        console(text) {
+            document.querySelector("#console>p").innerHTML = typeof text === "object" ? JSON.stringify(text) : text;
+        },
+        
+    },
+
+   
+    watch: {
+        async isMocked() {
+        await this.init();
+        }
     },
 };
 </script>
